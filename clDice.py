@@ -3,24 +3,18 @@ import numpy as np
 
 
 def dilation2d(x, kernel_size=3, dilations=1, strides=1):
-    weight = 1. / (kernel_size * kernel_size)
-    kernel = np.asarray(np.ones([kernel_size, kernel_size]), np.float32)
-    kernel = kernel.reshape(list(kernel.shape) + [1, 1])
-    kernel = np.tile(kernel, [1, 1, np.shape(x)[-1], 1]) * weight
+    kernel = tf.zeros([kernel_size, kernel_size, x.get_shape().as_list()[-1]], tf.float32)
     y = tf.nn.dilation2d(x,
-                         filters=tf.constant(np.squeeze(kernel, -1) - weight, tf.float32),
+                         filters=kernel,
                          strides=[1, strides, strides, 1], padding="SAME", data_format="NHWC",
                          dilations=[1, dilations, dilations, 1])
     return y
 
 
 def erosion2d(x, kernel_size=3, dilations=1, strides=1):
-    weight = 1. / (kernel_size * kernel_size)
-    kernel = np.asarray(np.ones([kernel_size, kernel_size]), np.float32)
-    kernel = kernel.reshape(list(kernel.shape) + [1, 1])
-    kernel = np.tile(kernel, [1, 1, np.shape(x)[-1], 1]) * weight
+    kernel = tf.zeros([kernel_size, kernel_size, x.get_shape().as_list()[-1]], tf.float32)
     y = tf.nn.erosion2d(x,
-                        filters=tf.constant(np.squeeze(kernel, -1) - weight, tf.float32),
+                        filters=kernel,
                         strides=[1, strides, strides, 1], padding="SAME", data_format="NHWC",
                         dilations=[1, dilations, dilations, 1])
     return y
